@@ -1,0 +1,29 @@
+version: '3.3'
+
+services:
+  postgres:
+    container_name: postgres-db
+    image: postgres:15.2
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=passw0rd
+      - PGDATA=/data/postgres
+      - APP_DB_USER=user
+      - APP_DB_PASS=passw0rd
+      - APP_DB_NAME=app_db
+    volumes:
+      # - ./volume/db-init:/docker-entrypoint-initdb.d/
+      - postgres-db:/data/postgres
+    ports:
+      - 5432:5432
+    logging:
+        options:
+            max-size: 1g
+volumes:
+  postgres-db:
